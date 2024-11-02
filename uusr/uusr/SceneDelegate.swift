@@ -1,8 +1,8 @@
 //
 //  SceneDelegate.swift
-//  uusr
+//  UserSimpleSelfieRegister
 //
-//  Created by Jianming Chen on 2024-11-02.
+//  Created by ZHANG ZHE on 2024-11-01.
 //
 
 import UIKit
