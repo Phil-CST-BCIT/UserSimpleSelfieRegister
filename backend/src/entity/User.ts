@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import 'reflect-metadata';
 
 @Entity()
 export class User {
@@ -14,7 +13,5 @@ export class User {
   @Column()
   address: string;
   @Column()
-  selfie: Blob;
+  selfie: Buffer;
 }
-
-

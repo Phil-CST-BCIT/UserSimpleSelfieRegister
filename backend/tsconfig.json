@@ -3,8 +3,10 @@
     "outDir": "./built",
     "allowJs": true,
     "target": "es5",
+    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "esModuleInterop": true
   },
   "include": ["./src/**/*"]
 }
