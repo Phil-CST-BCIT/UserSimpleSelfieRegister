@@ -55,6 +55,13 @@ struct LoginView: View {
                     .foregroundColor(.red)
                     .padding(.top, 10)
             }
+            
+            Button(action: {
+                print("Register tapped")
+            }){
+                Text("Register").foregroundColor(.blue)
+            }
+            .padding(.top, 10)
 
             Spacer()
         }
