@@ -19,15 +19,15 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd usr || { echo "Directory 'usr' not found!"; exit 1; }
+          cd uusr || { echo "Directory 'uusr' not found!"; exit 1; }
           xcodebuild -resolvePackageDependencies
 
       - name: Build App
         run: |
-          cd usr || { echo "Directory 'usr' not found!"; exit 1; }
-          xcodebuild -scheme usr -destination 'platform=iOS Simulator,OS=18.0,name=iPhone 16' build
+          cd uusr || { echo "Directory 'uusr' not found!"; exit 1; }
+          xcodebuild -scheme uusr -destination 'platform=iOS Simulator,OS=18.0,name=iPhone 16' build
 
       - name: Run Tests
         run: |
-          cd usr || { echo "Directory 'usr' not found!"; exit 1; }
-          xcodebuild test -scheme usr -destination 'platform=iOS Simulator,OS=18.0,name=iPhone 16'
+          cd uusr || { echo "Directory 'uusr' not found!"; exit 1; }
+          xcodebuild test -scheme uusr -destination 'platform=iOS Simulator,OS=18.0,name=iPhone 16'
