@@ -12,7 +12,7 @@ struct LoginView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var isLoginFailed = false
-
+    @State private var showRegistration = false
     var body: some View {
         VStack(spacing: 20) {
             // App Title
@@ -62,7 +62,9 @@ struct LoginView: View {
                 Text("Register").foregroundColor(.blue)
             }
             .padding(.top, 10)
-
+            .sheet(isPresented: $showRegistration){
+                RegistrationView()
+            }
             Spacer()
         }
         .padding()
