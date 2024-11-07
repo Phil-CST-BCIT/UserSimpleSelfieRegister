@@ -6,14 +6,19 @@
 //
 
 import SwiftUI
+import Firebase
+import FirebaseFirestore
 
 struct RegistrationView: View {
     @State private var firstName: String = ""
     @State private var lastName: String = ""
+    @State private var email: String = ""
     @State private var unitNumber: String = ""
     @State private var buildingName: String = ""
+    @State private var password: String = ""
     @State private var showingImagePicker = false
     @State private var profileImage: Image? = nil
+    @State private var isEmailInvalid = false
 
     var body: some View {
         VStack(spacing: 20) {
@@ -58,6 +63,30 @@ struct RegistrationView: View {
                 .background(Color(.secondarySystemBackground))
                 .cornerRadius(10)
             
+            // Email Field
+            TextField("Email", text: $email)
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(10)
+                .autocapitalization(.none)
+                .keyboardType(.emailAddress)
+                .onChange(of: email) { newValue in
+                    isEmailInvalid = !isValidEmail(newValue)
+                }
+            
+            if isEmailInvalid {
+                Text("Invalid email address")
+                    .foregroundColor(.red)
+                    .font(.footnote)
+                    .padding(.bottom, 5)
+            }
+            
+            // Password Field
+            SecureField("Password", text: $password)
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(10)
+            
             // Unit Number Field
             TextField("Unit Number", text: $unitNumber)
                 .padding()
@@ -72,7 +101,9 @@ struct RegistrationView: View {
             
             // Register Button
             Button(action: {
-                registerUser()
+                if !isEmailInvalid {
+                    registerUser()
+                }
             }) {
                 Text("Register")
                     .fontWeight(.bold)
@@ -83,6 +114,7 @@ struct RegistrationView: View {
                     .cornerRadius(10)
             }
             .padding(.top, 20)
+            .disabled(isEmailInvalid)
 
             Spacer()
         }
@@ -90,8 +122,29 @@ struct RegistrationView: View {
     }
     
     func registerUser() {
-        // Handle the registration logic here
-        print("Registering user with information: \(firstName), \(lastName), \(unitNumber), \(buildingName)")
+        let db = Firestore.firestore()
+        let userData: [String: Any] = [
+            "firstName": firstName,
+            "lastName": lastName,
+            "email": email,
+            "password": password,
+            "unitNumber": unitNumber,
+            "buildingName": buildingName
+        ]
+        
+        db.collection("users").addDocument(data: userData) { error in
+            if let error = error {
+                print("Error adding document: \(error)")
+            } else {
+                print("User successfully registered: \(firstName), \(lastName)")
+            }
+        }
+    }
+    
+    func isValidEmail(_ email: String) -> Bool {
+        let emailFormat = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailFormat)
+        return emailPredicate.evaluate(with: email)
     }
 }
 

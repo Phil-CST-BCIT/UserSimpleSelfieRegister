@@ -5,8 +5,9 @@
 //  Created by Jianming Chen on 2024-11-02.
 //
 
-
 import SwiftUI
+import Firebase
+import FirebaseFirestore
 
 struct LoginView: View {
     @State private var email: String = ""
@@ -75,8 +76,31 @@ struct LoginView: View {
     }
     
     func authenticateUser() {
-        isLoginFailed = !(email == "test@example.com" && password == "password") // 示例逻辑
-        isLoggedIn = !isLoginFailed
+        let db = Firestore.firestore()
+        db.collection("users").whereField("email", isEqualTo: email).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                print("Error fetching user: \(error)")
+                self.isLoginFailed = true
+                return
+            }
+            
+            guard let documents = querySnapshot?.documents, let document = documents.first else {
+                self.isLoginFailed = true
+                return
+            }
+            
+            let data = document.data()
+            if let storedPassword = data["password"] as? String {
+                if storedPassword == self.password {
+                    self.isLoginFailed = false
+                    self.isLoggedIn = true
+                } else {
+                    self.isLoginFailed = true
+                }
+            } else {
+                self.isLoginFailed = true
+            }
+        }
     }
 }
 
@@ -87,4 +111,3 @@ struct LoginView_Previews: PreviewProvider {
         LoginView(isLoggedIn: $isLoggedIn) // Pass state to LoginView's isLoggedIn binding
     }
 }
-

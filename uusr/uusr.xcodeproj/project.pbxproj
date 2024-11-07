@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CC56AA332CDD365F00302901 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = CC56AA322CDD365F00302901 /* FirebaseAnalytics */; };
+		CC56AA352CDD3A5300302901 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = CC56AA342CDD3A5300302901 /* FirebaseAnalyticsWithoutAdIdSupport */; };
+		CC56AA372CDD3ACF00302901 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = CC56AA362CDD3ACF00302901 /* FirebaseFirestore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		59467DA62CD6B04700FF8EEB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +71,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC56AA332CDD365F00302901 /* FirebaseAnalytics in Frameworks */,
+				CC56AA352CDD3A5300302901 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
+				CC56AA372CDD3ACF00302901 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +134,9 @@
 			);
 			name = uusr;
 			packageProductDependencies = (
+				CC56AA322CDD365F00302901 /* FirebaseAnalytics */,
+				CC56AA342CDD3A5300302901 /* FirebaseAnalyticsWithoutAdIdSupport */,
+				CC56AA362CDD3ACF00302901 /* FirebaseFirestore */,
 			);
 			productName = uusr;
 			productReference = 59467D8F2CD6B04500FF8EEB /* uusr.app */;
@@ -208,6 +220,9 @@
 			);
 			mainGroup = 59467D862CD6B04400FF8EEB;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CC56AA312CDD365F00302901 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 59467D902CD6B04500FF8EEB /* Products */;
 			projectDirPath = "";
@@ -289,6 +304,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9B2MH9AAS5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = uusr/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -316,6 +332,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9B2MH9AAS5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = uusr/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -563,6 +580,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CC56AA312CDD365F00302901 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CC56AA322CDD365F00302901 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC56AA312CDD365F00302901 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		CC56AA342CDD3A5300302901 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC56AA312CDD365F00302901 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsWithoutAdIdSupport;
+		};
+		CC56AA362CDD3ACF00302901 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC56AA312CDD365F00302901 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 59467D872CD6B04400FF8EEB /* Project object */;
 }
