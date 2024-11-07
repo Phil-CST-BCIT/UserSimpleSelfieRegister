@@ -23,12 +23,15 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          cd uusr
           xcodebuild -resolvePackageDependencies
 
       - name: Build App
         run: |
+          cd uusr
           xcodebuild -scheme uusr -destination 'platform=iOS Simulator,OS=18.0,name=iPhone 14' build
 
       - name: Run Tests
         run: |
+          cd uusr
           xcodebuild test -scheme uusr -destination 'platform=iOS Simulator,OS=18.0,name=iPhone 14'
