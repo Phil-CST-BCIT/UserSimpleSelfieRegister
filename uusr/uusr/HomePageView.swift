@@ -8,59 +8,67 @@ import SwiftUI
 
 struct HomePageView: View {
     var body: some View {
-        NavigationView {
-            VStack {
+        NavigationStack {
+            VStack(alignment: .leading) {
                 Text("Home Page")
                     .font(.title)
-                    .foregroundColor(.purple)
+                    .fontWeight(.bold)
+                    .foregroundColor(.blue)
                     .padding(.top, 20)
+                    .padding(.leading)
                 
-                List(0..<10) { _ in
-                    HStack {
-                        // Profile icon
-                        Circle()
-                            .fill(Color.purple.opacity(0.3))
-                            .frame(width: 50, height: 50)
-                            .overlay(
-                                Text("A")
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.purple)
-                            )
-                        
-                        VStack(alignment: .leading) {
-                            Text("firstname")
-                                .fontWeight(.bold)
-                            Text("lastname")
-                                .foregroundColor(.gray)
-                        }
-                        
-                        Spacer()
-                        
-                        // Placeholder for icons on the right
-                        HStack(spacing: 10) {
-                            Circle()
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(width: 20, height: 20)
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(width: 20, height: 20)
-                            Triangle()
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(width: 20, height: 20)
+                ScrollView {
+                    VStack(spacing: 10) {
+                        ForEach(0..<10, id: \.self) { _ in
+                            HStack {
+                                // 头像
+                                Circle()
+                                    .fill(Color.blue.opacity(0.2))
+                                    .frame(width: 50, height: 50)
+                                    .overlay(
+                                        Text("A")
+                                            .fontWeight(.bold)
+                                            .foregroundColor(.blue)
+                                    )
+                                
+                                VStack(alignment: .leading) {
+                                    Text("firstname")
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.primary)
+                                    Text("lastname")
+                                        .foregroundColor(.gray)
+                                }
+                                
+                                Spacer()
+                                
+                                // 图标部分
+                                HStack(spacing: 10) {
+                                    Circle()
+                                        .fill(Color.gray.opacity(0.2))
+                                        .frame(width: 20, height: 20)
+                                    Rectangle()
+                                        .fill(Color.gray.opacity(0.2))
+                                        .frame(width: 20, height: 20)
+                                    Triangle()
+                                        .fill(Color.gray.opacity(0.2))
+                                        .frame(width: 20, height: 20)
+                                }
+                            }
+                            .padding()
+                            .background(Color(.secondarySystemBackground))
+                            .cornerRadius(10)
                         }
                     }
-                    .padding()
-                    .background(Color.purple.opacity(0.1))
-                    .cornerRadius(10)
+                    .padding([.leading, .trailing])
                 }
-                .padding([.leading, .trailing])
             }
             .navigationBarHidden(true)
+            .padding()
         }
     }
 }
 
-// Custom triangle shape for the icon
+// 自定义三角形图标
 struct Triangle: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -72,3 +80,8 @@ struct Triangle: Shape {
     }
 }
 
+struct HomePageView_Previews: PreviewProvider {
+    static var previews: some View {
+        HomePageView()
+    }
+}
