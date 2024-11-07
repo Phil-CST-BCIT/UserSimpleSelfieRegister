@@ -1,24 +1,27 @@
-//
-//  UserModel.swift
-//  uusr
-//
-//  Created by Jianming Chen on 2024-11-07.
-//
-
 import Foundation
 
-enum UserRole{
+enum UserRole {
     case manager
     case individual
 }
 
-struct User: Identifiable{
+class User: ObservableObject, Identifiable {
     let id = UUID()
-    var email: String
-    var password: String
-    var role: UserRole
-    var firstName: String
-    var lastName: String
-    var unitNumber: String?
-    var buildingName:String?
+    @Published var email: String
+    @Published var password: String
+    @Published var role: UserRole
+    @Published var firstName: String
+    @Published var lastName: String
+    @Published var unitNumber: String?
+    @Published var buildingName: String?
+
+    init(email: String, password: String, role: UserRole, firstName: String, lastName: String, unitNumber: String?, buildingName: String?) {
+        self.email = email
+        self.password = password
+        self.role = role
+        self.firstName = firstName
+        self.lastName = lastName
+        self.unitNumber = unitNumber
+        self.buildingName = buildingName
+    }
 }

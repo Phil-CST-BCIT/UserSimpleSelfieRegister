@@ -16,10 +16,10 @@ class ViewController: UIViewController {
     @State private var isLoggedIn = false
     @State private var currentUserRole: UserRole?
     
-    // 定义临时的测试用户账号
+    // Temporary test user accounts
     let testUsers = [
-        User(email: "parker1123@outlook.com", password: "admin123", role: .manager, firstName: "Admin", lastName: "User"),
-        User(email: "user@gmail.com", password: "user123", role: .individual, firstName: "User", lastName: "Person")
+        User(email: "parker1123@outlook.com", password: "admin123", role: .manager, firstName: "Admin", lastName: "User", unitNumber: nil, buildingName: nil),
+        User(email: "user@gmail.com", password: "user123", role: .individual, firstName: "User", lastName: "Person", unitNumber: nil, buildingName: nil)
     ]
 
     override func viewDidLoad() {
@@ -54,13 +54,13 @@ class ViewController: UIViewController {
     }
     
     func authenticateUser(username: String, password: String) {
-        // 检查输入的用户名和密码是否匹配测试用户
-        if let user = testUsers.first(where: { $0.email == username.lowercased() && $0.password == password }) {
+        // Check if the entered username and password match any test user
+        if let user = testUsers.first(where: { $0.email.lowercased() == username.lowercased() && $0.password == password }) {
             print("Login successful")
             isLoggedIn = true
             currentUserRole = user.role
             
-            // 根据用户角色导航到不同的页面
+            // Navigate to different pages based on the user's role
             if currentUserRole == .manager {
                 navigateToHomePage()
             } else {
@@ -90,4 +90,3 @@ class ViewController: UIViewController {
         self.present(alert, animated: true)
     }
 }
-

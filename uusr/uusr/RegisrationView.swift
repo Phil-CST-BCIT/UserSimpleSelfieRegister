@@ -123,13 +123,28 @@ struct RegistrationView: View {
     
     func registerUser() {
         let db = Firestore.firestore()
+        
+        // Create User instance
+        let newUser = User(
+            email: email,
+            password: password,
+            role: .individual,
+            firstName: firstName,
+            lastName: lastName,
+            unitNumber: unitNumber.isEmpty ? nil : unitNumber,
+            buildingName: buildingName.isEmpty ? nil : buildingName
+        )
+        
+        // Convert User instance to dictionary for Firestore
         let userData: [String: Any] = [
-            "firstName": firstName,
-            "lastName": lastName,
-            "email": email,
-            "password": password,
-            "unitNumber": unitNumber,
-            "buildingName": buildingName
+            "id": newUser.id.uuidString,
+            "firstName": newUser.firstName,
+            "lastName": newUser.lastName,
+            "email": newUser.email,
+            "password": newUser.password,
+            "unitNumber": newUser.unitNumber ?? "",
+            "buildingName": newUser.buildingName ?? "",
+            "role": newUser.role == .manager ? "manager" : "individual" // Set role as a string for storage
         ]
         
         db.collection("users").addDocument(data: userData) { error in

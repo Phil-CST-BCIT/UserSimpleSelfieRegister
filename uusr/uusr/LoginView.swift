@@ -14,7 +14,7 @@ struct LoginView: View {
     @State private var password: String = ""
     @State private var isLoginFailed = false
     @State private var showRegistration = false
-    @Binding var isLoggedIn: Bool // 绑定到 ContentView 的登录状态
+    @Binding var isLoggedIn: Bool // Bind to the ContentView's login state
     
     var body: some View {
         VStack(spacing: 20) {
@@ -94,12 +94,30 @@ struct LoginView: View {
                 if storedPassword == self.password {
                     self.isLoginFailed = false
                     self.isLoggedIn = true
+                    let user = User(
+                        email: email,
+                        password: storedPassword,
+                        role: (data["role"] as? String == "manager") ? .manager : .individual,
+                        firstName: data["firstName"] as? String ?? "",
+                        lastName: data["lastName"] as? String ?? "",
+                        unitNumber: data["unitNumber"] as? String,
+                        buildingName: data["buildingName"] as? String
+                    )
+                    navigateToPersonalDetailView(user: user)
                 } else {
                     self.isLoginFailed = true
                 }
             } else {
                 self.isLoginFailed = true
             }
+        }
+    }
+    
+    func navigateToPersonalDetailView(user: User) {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            window.rootViewController = UIHostingController(rootView: PersonalDetailView(user: user))
+            window.makeKeyAndVisible()
         }
     }
 }

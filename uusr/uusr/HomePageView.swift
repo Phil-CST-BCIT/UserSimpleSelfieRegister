@@ -1,7 +1,6 @@
 //
 //  HomePage.swift
 //  uusr
-//
 //  Created by Jianming Chen on 2024-11-05.
 //
 import SwiftUI
@@ -10,11 +9,11 @@ struct HomePageView: View {
     @State private var searchText: String = ""
     @State private var sortAscending: Bool = true
     
-    // 示例用户数据，可以根据实际情况替换
+    // Sample user data, replace with actual data as needed
     @State private var users = [
-        User(email: "admin@example.com", password: "admin123", role: .manager, firstName: "Alice", lastName: "Smith"),
-        User(email: "user@example.com", password: "user123", role: .individual, firstName: "Bob", lastName: "Johnson"),
-        User(email: "user2@example.com", password: "user123", role: .individual, firstName: "Charlie", lastName: "Brown")
+        User(email: "admin@example.com", password: "admin123", role: .manager, firstName: "Alice", lastName: "Smith", unitNumber: nil, buildingName: nil),
+        User(email: "user@example.com", password: "user123", role: .individual, firstName: "Bob", lastName: "Johnson", unitNumber: nil, buildingName: nil),
+        User(email: "user2@example.com", password: "user123", role: .individual, firstName: "Charlie", lastName: "Brown", unitNumber: nil, buildingName: nil)
     ]
     
     var body: some View {
@@ -27,14 +26,14 @@ struct HomePageView: View {
                     .padding(.top, 20)
                     .padding(.leading)
                 
-                // 搜索框
+                // Search bar
                 TextField("Search", text: $searchText)
                     .padding()
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(10)
                     .padding([.leading, .trailing])
 
-                // 排序按钮
+                // Sort button
                 HStack {
                     Text("Sort by First Name")
                         .font(.subheadline)
@@ -48,10 +47,10 @@ struct HomePageView: View {
                 }
                 .padding([.leading, .trailing])
                 
-                // 用户列表
+                // User list
                 ScrollView {
                     VStack(spacing: 10) {
-                        ForEach(filteredUsers) { user in
+                        ForEach(filteredUsers, id: \.id) { user in
                             NavigationLink(destination: PersonalDetailView(user: user)) {
                                 UserRowView(user: user)
                             }
@@ -65,7 +64,7 @@ struct HomePageView: View {
         }
     }
     
-    // 过滤用户数据
+    // Filtered user data
     var filteredUsers: [User] {
         users.filter { user in
             searchText.isEmpty || user.firstName.lowercased().contains(searchText.lowercased())
@@ -73,9 +72,9 @@ struct HomePageView: View {
     }
 }
 
-// 每行的用户信息视图
+// User information for each row
 struct UserRowView: View {
-    var user: User
+    @ObservedObject var user: User
     
     var body: some View {
         HStack {
