@@ -14,7 +14,7 @@ struct LoginView: View {
     @State private var isLoginFailed = false
     @State private var showRegistration = false
     @Binding var isLoggedIn: Bool // 绑定到 ContentView 的登录状态
-
+    
     var body: some View {
         VStack(spacing: 20) {
             // App Title
@@ -22,7 +22,7 @@ struct LoginView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .padding(.bottom, 40)
-
+            
             // Email Field
             TextField("Email", text: $email)
                 .padding()
@@ -30,13 +30,13 @@ struct LoginView: View {
                 .cornerRadius(10)
                 .autocapitalization(.none)
                 .keyboardType(.emailAddress)
-
+            
             // Password Field
             SecureField("Password", text: $password)
                 .padding()
                 .background(Color(.secondarySystemBackground))
                 .cornerRadius(10)
-
+            
             // Login Button
             Button(action: {
                 authenticateUser()
@@ -50,14 +50,14 @@ struct LoginView: View {
                     .cornerRadius(10)
             }
             .padding(.top, 10)
-
+            
             // Error Message
             if isLoginFailed {
                 Text("Invalid email or password")
                     .foregroundColor(.red)
                     .padding(.top, 10)
             }
-
+            
             // Register Button
             Button(action: {
                 showRegistration.toggle()
@@ -68,23 +68,17 @@ struct LoginView: View {
             .sheet(isPresented: $showRegistration) {
                 RegistrationView()
             }
-
+            
             Spacer()
         }
         .padding()
     }
-
+    
     func authenticateUser() {
-        // 模拟的登录逻辑，如果成功则设置 isLoggedIn 为 true
-        if email == "test@example.com" && password == "password" { // 替换为实际的登录逻辑
-            isLoggedIn = true
-            isLoginFailed = false
-        } else {
-            isLoginFailed = true
-        }
+        isLoginFailed = !(email == "test@example.com" && password == "password") // 示例逻辑
+        isLoggedIn = !isLoginFailed
     }
 }
-
 
 struct LoginView_Previews: PreviewProvider {
     @State static var isLoggedIn = false // Create a temporary state
