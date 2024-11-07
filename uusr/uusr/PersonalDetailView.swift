@@ -1,115 +1,125 @@
 import SwiftUI
-import Firebase
 import FirebaseFirestore
 
 struct PersonalDetailView: View {
-    @StateObject var user: User
-    @State private var isLoading: Bool = true
+    @ObservedObject var user: User
 
     var body: some View {
         VStack(spacing: 20) {
-            if isLoading {
-                ProgressView()
-            } else {
-                // Profile Circle with Initial
-                Circle()
-                    .fill(Color.blue.opacity(0.2))
-                    .frame(width: 100, height: 100)
-                    .overlay(
-                        Text(String(user.firstName.prefix(1)))
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .foregroundColor(.blue)
-                    )
-                
-                // Full Name
-                Text("\(user.firstName) \(user.lastName)")
-                    .font(.title)
+            // Profile Circle with Initial
+            Circle()
+                .fill(Color.blue.opacity(0.2))
+                .frame(width: 100, height: 100)
+                .overlay(
+                    Text(String(user.firstName.prefix(1)))
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(.blue)
+                )
+            
+            // Full Name
+            Text("\(user.firstName) \(user.lastName)")
+                .font(.title)
+                .fontWeight(.bold)
+                .padding(.top, 20)
+            
+            // Email
+            HStack {
+                Text("Email:")
                     .fontWeight(.bold)
+                Text(user.email)
+            }
+            .padding()
+            .background(Color(.secondarySystemBackground))
+            .cornerRadius(10)
+            
+            // Role
+            HStack {
+                Text("Role:")
+                    .fontWeight(.bold)
+                Text(user.role == .manager ? "Manager" : "Individual")
+            }
+            .padding()
+            .background(Color(.secondarySystemBackground))
+            .cornerRadius(10)
+            
+            // Unit Number
+            if let unitNumber = user.unitNumber, !unitNumber.isEmpty {
+                HStack {
+                    Text("Unit Number:")
+                        .fontWeight(.bold)
+                    Text(unitNumber)
+                }
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(10)
+            }
+            
+            // Building Name
+            if let buildingName = user.buildingName, !buildingName.isEmpty {
+                HStack {
+                    Text("Building Name:")
+                        .fontWeight(.bold)
+                    Text(buildingName)
+                }
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(10)
+            }
+
+            // Status Section
+            VStack {
+                Text("Status")
+                    .font(.headline)
                     .padding(.top, 20)
-                
-                // Email
-                HStack {
-                    Text("Email:")
-                        .fontWeight(.bold)
-                    Text(user.email)
-                }
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(10)
-                
-                // Role
-                HStack {
-                    Text("Role:")
-                        .fontWeight(.bold)
-                    Text(user.role == .manager ? "Manager" : "Individual")
-                }
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(10)
-                
-                // Unit Number
-                if let unitNumber = user.unitNumber, !unitNumber.isEmpty {
+
+                ForEach(Status.allCases, id: \.self) { status in
                     HStack {
-                        Text("Unit Number:")
-                            .fontWeight(.bold)
-                        Text(unitNumber)
+                        Toggle(isOn: Binding(
+                            get: { user.status.contains(status) },
+                            set: { isSelected in
+                                if isSelected {
+                                    user.status.append(status)
+                                } else {
+                                    user.status.removeAll { $0 == status }
+                                }
+                                // Cache the updated status locally
+                                saveStatusLocally(for: user)
+                                // Push to Firestore
+                                updateStatusInFirestore(for: user)
+                            }
+                        )) {
+                            Text(status.rawValue.capitalized)
+                        }
                     }
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(10)
-                }
-                
-                // Building Name
-                if let buildingName = user.buildingName, !buildingName.isEmpty {
-                    HStack {
-                        Text("Building Name:")
-                            .fontWeight(.bold)
-                        Text(buildingName)
-                    }
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(10)
+                    .padding(.horizontal)
                 }
             }
+            .padding()
+            .background(Color(.secondarySystemBackground))
+            .cornerRadius(10)
             
             Spacer()
         }
         .padding()
         .navigationTitle("User Details")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            fetchUserDetails()
-        }
     }
-    
-    func fetchUserDetails() {
+
+    func saveStatusLocally(for user: User) {
+        UserDefaults.standard.set(user.status.map { $0.rawValue }, forKey: "status_\(user.id.uuidString)")
+    }
+
+    func updateStatusInFirestore(for user: User) {
         let db = Firestore.firestore()
-        db.collection("users").document(user.id.uuidString).getDocument { (document, error) in
-            if let document = document, document.exists {
-                if let data = document.data() {
-                    DispatchQueue.main.async {
-                        user.firstName = data["firstName"] as? String ?? ""
-                        user.lastName = data["lastName"] as? String ?? ""
-                        user.email = data["email"] as? String ?? ""
-                        user.password = data["password"] as? String ?? ""
-                        user.role = (data["role"] as? String == "manager") ? .manager : .individual
-                        user.unitNumber = data["unitNumber"] as? String
-                        user.buildingName = data["buildingName"] as? String
-                        isLoading = false
-                    }
-                } else {
-                    isLoading = false
-                }
+        db.collection("users").document(user.id.uuidString).updateData([
+            "status": user.status.map { $0.rawValue }
+        ]) { error in
+            if let error = error {
+                print("Error updating status: \(error)")
             } else {
-                isLoading = false
+                print("Status successfully updated for user: \(user.id)")
             }
         }
-    }
-}
-
-struct PersonalDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        PersonalDetailView(user: User(email: "example@example.com", password: "password", role: .individual, firstName: "John", lastName: "Doe", unitNumber: "101", buildingName: "Sunset Apartments"))
     }
 }

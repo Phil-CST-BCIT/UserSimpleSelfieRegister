@@ -1,10 +1,3 @@
-//
-//  LoginView.swift
-//  uusr
-//
-//  Created by Jianming Chen on 2024-11-02.
-//
-
 import SwiftUI
 import Firebase
 import FirebaseFirestore
@@ -14,8 +7,8 @@ struct LoginView: View {
     @State private var password: String = ""
     @State private var isLoginFailed = false
     @State private var showRegistration = false
-    @Binding var isLoggedIn: Bool // Bind to the ContentView's login state
-    
+    @EnvironmentObject var userViewModel: UserViewModel
+
     var body: some View {
         VStack(spacing: 20) {
             // App Title
@@ -85,6 +78,7 @@ struct LoginView: View {
             }
             
             guard let documents = querySnapshot?.documents, let document = documents.first else {
+                print("No matching documents found.")
                 self.isLoginFailed = true
                 return
             }
@@ -92,40 +86,23 @@ struct LoginView: View {
             let data = document.data()
             if let storedPassword = data["password"] as? String {
                 if storedPassword == self.password {
+                    print("Login successful. Changing isLoggedIn state to true.")
                     self.isLoginFailed = false
-                    self.isLoggedIn = true
-                    let user = User(
-                        email: email,
-                        password: storedPassword,
-                        role: (data["role"] as? String == "manager") ? .manager : .individual,
-                        firstName: data["firstName"] as? String ?? "",
-                        lastName: data["lastName"] as? String ?? "",
-                        unitNumber: data["unitNumber"] as? String,
-                        buildingName: data["buildingName"] as? String
-                    )
-                    navigateToPersonalDetailView(user: user)
+                    userViewModel.isLoggedIn = true // Update state to show ClientListView
                 } else {
+                    print("Incorrect password.")
                     self.isLoginFailed = true
                 }
             } else {
+                print("Password data missing.")
                 self.isLoginFailed = true
             }
-        }
-    }
-    
-    func navigateToPersonalDetailView(user: User) {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first {
-            window.rootViewController = UIHostingController(rootView: PersonalDetailView(user: user))
-            window.makeKeyAndVisible()
         }
     }
 }
 
 struct LoginView_Previews: PreviewProvider {
-    @State static var isLoggedIn = false // Create a temporary state
-
     static var previews: some View {
-        LoginView(isLoggedIn: $isLoggedIn) // Pass state to LoginView's isLoggedIn binding
+        LoginView().environmentObject(UserViewModel())
     }
 }

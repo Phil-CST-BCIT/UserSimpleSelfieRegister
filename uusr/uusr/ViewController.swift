@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  UserSimpleSelfieRegister
-//
-//  Created by ZHANG ZHE on 2024-11-01.
-//
-
 import UIKit
 import SwiftUI
 
@@ -13,8 +6,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var usernameTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     
-    @State private var isLoggedIn = false
-    @State private var currentUserRole: UserRole?
+    let userViewModel = UserViewModel()  // Create an instance of UserViewModel
     
     // Temporary test user accounts
     let testUsers = [
@@ -25,9 +17,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let loginView = LoginView(isLoggedIn: $isLoggedIn)
+        let contentView = ContentView().environmentObject(userViewModel)
+        let hostingController = UIHostingController(rootView: contentView)
         
-        let hostingController = UIHostingController(rootView: loginView)
         addChild(hostingController)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(hostingController.view)
@@ -57,11 +49,10 @@ class ViewController: UIViewController {
         // Check if the entered username and password match any test user
         if let user = testUsers.first(where: { $0.email.lowercased() == username.lowercased() && $0.password == password }) {
             print("Login successful")
-            isLoggedIn = true
-            currentUserRole = user.role
+            userViewModel.isLoggedIn = true  // Update the state in UserViewModel
             
             // Navigate to different pages based on the user's role
-            if currentUserRole == .manager {
+            if user.role == .manager {
                 navigateToHomePage()
             } else {
                 navigateToPersonalDetailPage(user: user)
@@ -73,13 +64,13 @@ class ViewController: UIViewController {
     }
     
     func navigateToHomePage() {
-        let homePageView = HomePageView()
+        let homePageView = HomePageView().environmentObject(userViewModel)
         let hostingController = UIHostingController(rootView: homePageView)
         present(hostingController, animated: true, completion: nil)
     }
     
     func navigateToPersonalDetailPage(user: User) {
-        let personalDetailView = PersonalDetailView(user: user)
+        let personalDetailView = PersonalDetailView(user: user).environmentObject(userViewModel)
         let hostingController = UIHostingController(rootView: personalDetailView)
         present(hostingController, animated: true, completion: nil)
     }

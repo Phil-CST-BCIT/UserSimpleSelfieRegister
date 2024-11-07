@@ -5,6 +5,13 @@ enum UserRole {
     case individual
 }
 
+enum Status: String, CaseIterable {
+    case completed
+    case refused
+    case partial
+    case pending
+}
+
 class User: ObservableObject, Identifiable {
     let id = UUID()
     @Published var email: String
@@ -14,8 +21,9 @@ class User: ObservableObject, Identifiable {
     @Published var lastName: String
     @Published var unitNumber: String?
     @Published var buildingName: String?
+    @Published var status: [Status] // Add status property
 
-    init(email: String, password: String, role: UserRole, firstName: String, lastName: String, unitNumber: String?, buildingName: String?) {
+    init(email: String, password: String, role: UserRole, firstName: String, lastName: String, unitNumber: String?, buildingName: String?, status: [Status] = []) {
         self.email = email
         self.password = password
         self.role = role
@@ -23,5 +31,6 @@ class User: ObservableObject, Identifiable {
         self.lastName = lastName
         self.unitNumber = unitNumber
         self.buildingName = buildingName
+        self.status = status
     }
 }
