@@ -18,8 +18,8 @@ class ViewController: UIViewController {
     
     // 定义临时的测试用户账号
     let testUsers = [
-        User(email: "admin@example.com", password: "admin123", role: .manager, firstName: "Admin", lastName: "User"),
-        User(email: "user@example.com", password: "user123", role: .individual, firstName: "User", lastName: "Person")
+        User(email: "parker1123@outlook.com", password: "admin123", role: .manager, firstName: "Admin", lastName: "User"),
+        User(email: "user@gmail.com", password: "user123", role: .individual, firstName: "User", lastName: "Person")
     ]
 
     override func viewDidLoad() {
@@ -43,19 +43,19 @@ class ViewController: UIViewController {
     }
     
     @IBAction func signInTapped(_ sender: UIButton) {
-        let username = usernameTextField.text ?? ""
+        let email = usernameTextField.text ?? ""
         let password = passwordTextField.text ?? ""
-        
-        if username.isEmpty || password.isEmpty {
+        print("Email entered: \(email), Password entered: \(password)")
+        if email.isEmpty || password.isEmpty {
             showAlert(message: "Please enter both username and password.")
         } else {
-            authenticateUser(username: username, password: password)
+            authenticateUser(username: email, password: password)
         }
     }
     
     func authenticateUser(username: String, password: String) {
         // 检查输入的用户名和密码是否匹配测试用户
-        if let user = testUsers.first(where: { $0.email == username && $0.password == password }) {
+        if let user = testUsers.first(where: { $0.email == username.lowercased() && $0.password == password }) {
             print("Login successful")
             isLoggedIn = true
             currentUserRole = user.role
@@ -67,6 +67,7 @@ class ViewController: UIViewController {
                 navigateToPersonalDetailPage(user: user)
             }
         } else {
+            print("No matching user found for email: \(username) and password: \(password)")
             showAlert(message: "Invalid username or password.")
         }
     }

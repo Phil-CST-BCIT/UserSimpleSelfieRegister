@@ -19,4 +19,6 @@ struct User: Identifiable{
     var role: UserRole
     var firstName: String
     var lastName: String
+    var unitNumber: String?
+    var buildingName:String?
 }
