@@ -1,6 +1,9 @@
 import SwiftUI
 import FirebaseFirestore
 
+// Global variable to hold the document ID
+var currentUserDocumentID: String?
+
 struct ClientListView: View {
     @EnvironmentObject var userViewModel: UserViewModel
     @State private var clients: [User] = []
@@ -96,14 +99,13 @@ struct ClientListView: View {
                 let userId = document.documentID // Get the user document ID
                 print("Fetched user ID: \(userId)") // Print the user ID to the terminal
                 
+                // Assign the document ID to the global variable
+                currentUserDocumentID = userId
+                
                 // Read status as a dictionary
                 let statusData = data["status"] as? [String: Bool] ?? [:]
                 
-                // Convert status dictionary to Status array
-                let status = Status.allCases.compactMap { status in
-                    return statusData[status.rawValue] == true ? status : nil
-                }
-                
+                // Create a User object with the status dictionary
                 return User(
                     email: data["email"] as? String ?? "",
                     password: data["password"] as? String ?? "",
@@ -112,14 +114,14 @@ struct ClientListView: View {
                     lastName: data["lastName"] as? String ?? "",
                     unitNumber: data["unitNumber"] as? String,
                     buildingName: data["buildingName"] as? String,
-                    status: status, // Populate status from Firestore
-                    id: UUID(uuidString: userId) // Use the user document ID as UUID
+                    statusDictionary: statusData // Pass status dictionary from Firestore
                 )
             }
             sortClients()
             print("Fetched \(self.clients.count) clients.")
         }
     }
+
 
     // Sorting clients explicitly
     func sortClients() {
@@ -176,12 +178,18 @@ struct ClientRowView: View {
                             .foregroundColor(.gray)
                             .font(.subheadline)
                     }
+                    
+                    // Display User ID
+                    Text("User ID: \(currentUserDocumentID ?? "N/A")")
+                        .font(.footnote)
+                        .foregroundColor(.gray)
                 }
 
                 Spacer()
 
                 // Status Button
                 Button(action: {
+                    print("Status button clicked for User ID: \(currentUserDocumentID ?? "N/A")")
                     showStatusOptions.toggle()
                 }) {
                     Text("Status")
@@ -199,17 +207,9 @@ struct ClientRowView: View {
                     ForEach(Status.allCases, id: \.self) { status in
                         HStack {
                             Toggle(isOn: Binding(
-                                get: { user.status.contains(status) },
+                                get: { user.statusDictionary[status.rawValue] ?? false },
                                 set: { isSelected in
-                                    if isSelected {
-                                        user.status.append(status)
-                                    } else {
-                                        user.status.removeAll { $0 == status }
-                                    }
-                                    // Cache the updated status locally
-                                    saveStatusLocally(for: user)
-                                    // Push to Firestore
-                                    updateStatusInFirestore(for: user)
+                                    updateStatus(isSelected: isSelected, status: status, for: user)
                                 }
                             )) {
                                 Text(status.rawValue.capitalized)
@@ -227,19 +227,30 @@ struct ClientRowView: View {
         .cornerRadius(10)
     }
 
+    // Method to handle status updates
+    func updateStatus(isSelected: Bool, status: Status, for user: User) {
+        user.statusDictionary[status.rawValue] = isSelected
+
+        // Save status locally
+        saveStatusLocally(for: user)
+
+        // Push the updated status to Firestore
+        updateStatusInFirestore(for: user)
+    }
+
     func saveStatusLocally(for user: User) {
-        UserDefaults.standard.set(user.status.map { $0.rawValue }, forKey: "status_\(user.id.uuidString)")
+        UserDefaults.standard.set(user.statusDictionary, forKey: "status_\(currentUserDocumentID ?? "N/A")")
     }
 
     func updateStatusInFirestore(for user: User) {
         let db = Firestore.firestore()
-        db.collection("users").document(user.id.uuidString).updateData([
-            "status": user.status.map { $0.rawValue }
+        db.collection("users").document(currentUserDocumentID ?? "").updateData([
+            "status": user.statusDictionary
         ]) { error in
             if let error = error {
                 print("Error updating status: \(error)")
             } else {
-                print("Status successfully updated for user: \(user.id)")
+                print("Status successfully updated for user: \(currentUserDocumentID ?? "N/A")")
             }
         }
     }

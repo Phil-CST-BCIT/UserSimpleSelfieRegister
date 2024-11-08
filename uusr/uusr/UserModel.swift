@@ -21,9 +21,9 @@ class User: ObservableObject, Identifiable {
     @Published var lastName: String
     @Published var unitNumber: String?
     @Published var buildingName: String?
-    @Published var status: [Status] // Add status property
+    @Published var statusDictionary: [String: Bool] // Change status to a dictionary
 
-    init(email: String, password: String, role: UserRole, firstName: String, lastName: String, unitNumber: String?, buildingName: String?, status: [Status] = []) {
+    init(email: String, password: String, role: UserRole, firstName: String, lastName: String, unitNumber: String?, buildingName: String?, statusDictionary: [String: Bool] = [:]) {
         self.email = email
         self.password = password
         self.role = role
@@ -31,6 +31,6 @@ class User: ObservableObject, Identifiable {
         self.lastName = lastName
         self.unitNumber = unitNumber
         self.buildingName = buildingName
-        self.status = status
+        self.statusDictionary = statusDictionary
     }
 }

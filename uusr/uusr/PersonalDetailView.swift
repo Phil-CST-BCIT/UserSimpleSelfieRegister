@@ -76,13 +76,9 @@ struct PersonalDetailView: View {
                 ForEach(Status.allCases, id: \.self) { status in
                     HStack {
                         Toggle(isOn: Binding(
-                            get: { user.status.contains(status) },
+                            get: { user.statusDictionary[status.rawValue] ?? false },
                             set: { isSelected in
-                                if isSelected {
-                                    user.status.append(status)
-                                } else {
-                                    user.status.removeAll { $0 == status }
-                                }
+                                user.statusDictionary[status.rawValue] = isSelected
                                 // Cache the updated status locally
                                 saveStatusLocally(for: user)
                                 // Push to Firestore
@@ -107,18 +103,18 @@ struct PersonalDetailView: View {
     }
 
     func saveStatusLocally(for user: User) {
-        UserDefaults.standard.set(user.status.map { $0.rawValue }, forKey: "status_\(user.id.uuidString)")
+        UserDefaults.standard.set(user.statusDictionary, forKey: "status_\(user.id.uuidString)")
     }
 
     func updateStatusInFirestore(for user: User) {
         let db = Firestore.firestore()
-        db.collection("users").document(user.id.uuidString).updateData([
-            "status": user.status.map { $0.rawValue }
+        db.collection("users").document(currentUserDocumentID ?? "").updateData([
+            "status": user.statusDictionary
         ]) { error in
             if let error = error {
                 print("Error updating status: \(error)")
             } else {
-                print("Status successfully updated for user: \(user.id)")
+                print("Status successfully updated for user: \(currentUserDocumentID ?? "N/A")")
             }
         }
     }
