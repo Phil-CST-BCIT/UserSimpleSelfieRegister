@@ -31,7 +31,7 @@ jobs:
       - name: Build App
         run: |
           cd uusr || { echo "Directory 'uusr' not found!"; exit 1; }
-          xcodebuild -scheme uusr -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16' build
+          xcodebuild -scheme uusr -destination 'platform=iOS Simulator,OS=18.0,name=iPhone 16' build
 
   unit-tests:
     name: Run Unit Tests
@@ -51,7 +51,7 @@ jobs:
       - name: Run Unit Tests
         run: |
           cd uusr || { echo "Directory 'uusr' not found!"; exit 1; }
-          xcodebuild test -scheme uusr -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16' -only-testing:uusrTests
+          xcodebuild test -scheme uusr -destination 'platform=iOS Simulator,OS=18.0,name=iPhone 16' -only-testing:uusrTests
 
   ui-tests:
     name: Run UI Tests
@@ -81,6 +81,6 @@ jobs:
       - name: Run UI Tests
         run: |
           cd uusr || { echo "Directory 'uusr' not found!"; exit 1; }
-          xcodebuild test -scheme uusrUITests -destination 'platform=iOS Simulator,OS=18.1,name=iPhone 16'
+          xcodebuild test -scheme uusrUITests -destination 'platform=iOS Simulator,OS=18.0,name=iPhone 16'
         env:
           SIMCTL_CHILD_isHeadless: YES
