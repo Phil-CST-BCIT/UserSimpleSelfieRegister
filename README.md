@@ -33,7 +33,7 @@ open UserSimpleSelfieRegister
 4. **View Client Details**: Tap on a client in the list to view their details, including a larger photo and full address information.
 5. **Update Status**: In the detail view, set the client's status, which is then stored locally and posted back when possible.
 
-## Acknowledgments
+## Acknowledgments (BCIT bachelor of science in computer science)
 - Parker Chen (parkerchen1123@outlook.com)
 - Jerry Zhang (zhangzhe941020@yahoo.com)
 - Phil Teng (https://github.com/Phil-CST-BCIT)
