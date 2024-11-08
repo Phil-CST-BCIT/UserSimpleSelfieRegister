@@ -144,7 +144,8 @@ struct RegistrationView: View {
             "password": newUser.password,
             "unitNumber": newUser.unitNumber ?? "",
             "buildingName": newUser.buildingName ?? "",
-            "role": newUser.role == .manager ? "manager" : "individual" // Set role as a string for storage
+            "role": newUser.role == .manager ? "manager" : "individual", // Set role as a string for storage
+            "status": Status.allCases.reduce(into: [String: Bool]()) { $0[$1.rawValue] = false } // Initialize all statuses to false
         ]
         
         db.collection("users").addDocument(data: userData) { error in

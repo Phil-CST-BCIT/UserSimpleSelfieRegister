@@ -93,6 +93,17 @@ struct ClientListView: View {
             
             self.clients = documents.compactMap { document in
                 let data = document.data()
+                let userId = document.documentID // Get the user document ID
+                print("Fetched user ID: \(userId)") // Print the user ID to the terminal
+                
+                // Read status as a dictionary
+                let statusData = data["status"] as? [String: Bool] ?? [:]
+                
+                // Convert status dictionary to Status array
+                let status = Status.allCases.compactMap { status in
+                    return statusData[status.rawValue] == true ? status : nil
+                }
+                
                 return User(
                     email: data["email"] as? String ?? "",
                     password: data["password"] as? String ?? "",
@@ -101,7 +112,8 @@ struct ClientListView: View {
                     lastName: data["lastName"] as? String ?? "",
                     unitNumber: data["unitNumber"] as? String,
                     buildingName: data["buildingName"] as? String,
-                    status: (data["status"] as? [String])?.compactMap { Status(rawValue: $0) } ?? []
+                    status: status, // Populate status from Firestore
+                    id: UUID(uuidString: userId) // Use the user document ID as UUID
                 )
             }
             sortClients()
